@@ -23,10 +23,11 @@ export const getAreaAroundCharacter = (
   const zoneX = charGridX - zoneWidthHalf;
   const zoneY = charGridY - zoneHeightHalf;
 
-  return new Rectangle({
+  return {
     x: zoneX * GRID_WIDTH,
     y: zoneY * GRID_HEIGHT,
     width: zoneGridWidth * GRID_WIDTH,
     height: zoneGridHeight * GRID_HEIGHT,
-  });
+    qtIndex: Rectangle.prototype.qtIndex,
+  };
 };

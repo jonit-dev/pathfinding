@@ -6,10 +6,11 @@ describe("AreaAroundCharacter", () => {
     const result = getAreaAroundCharacter(-8, 17, 7, 7);
 
     expect(result).toStrictEqual({
-      x: -11,
-      y: 14,
+      x: -11 * GRID_WIDTH,
+      y: 14 * GRID_HEIGHT,
       width: 7 * GRID_WIDTH,
       height: 7 * GRID_HEIGHT,
+      qtIndex: expect.any(Function),
     });
   });
 
@@ -17,10 +18,11 @@ describe("AreaAroundCharacter", () => {
     const result = getAreaAroundCharacter(12, 27, 5, 5);
 
     expect(result).toStrictEqual({
-      x: 10,
-      y: 25,
+      x: 10 * GRID_WIDTH,
+      y: 25 * GRID_HEIGHT,
       width: 5 * GRID_WIDTH,
       height: 5 * GRID_HEIGHT,
+      qtIndex: expect.any(Function),
     });
   });
 });

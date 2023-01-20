@@ -1,8 +1,7 @@
 import { GRID_HEIGHT, GRID_WIDTH } from "@constants/gridConstants";
 import { container } from "@providers/inversify/container";
 import { getAreaAroundCharacter } from "@providers/libs/getAreaAroundCharacter";
-import { Rectangle } from "@timohausmann/quadtree-ts";
-import { MapSolidsQuadTree } from "../MapSolidsQuadTree";
+import { MapSolidsQuadTree } from "@providers/pathfinding/MapSolidsQuadTree";
 
 describe("MapSolidsQuadTree", () => {
   let mapSolidsQuadTree: MapSolidsQuadTree;
@@ -28,10 +27,15 @@ describe("MapSolidsQuadTree", () => {
     const result = mapSolidsQuadTree.getSolidsInArea("unit-test-map-negative-coordinate", area);
 
     expect(result).toHaveLength(3);
-    expect(result).toStrictEqual([
-      new Rectangle({ x: 4 * GRID_WIDTH, y: 15 * GRID_HEIGHT, width: GRID_WIDTH, height: GRID_HEIGHT }),
-      new Rectangle({ x: 3 * GRID_WIDTH, y: 18 * GRID_HEIGHT, width: GRID_WIDTH, height: GRID_HEIGHT }),
-      new Rectangle({ x: 7 * GRID_WIDTH, y: 17 * GRID_HEIGHT, width: GRID_WIDTH, height: GRID_HEIGHT }),
-    ]);
+
+    const hasSolidAt4x15 = result.some((solid) => solid.x === 4 * GRID_WIDTH && solid.y === 15 * GRID_HEIGHT);
+    const hasSolidAt3x18 = result.some((solid) => solid.x === 3 * GRID_WIDTH && solid.y === 18 * GRID_HEIGHT);
+    const hasSolidAt7x17 = result.some((solid) => solid.x === 7 * GRID_WIDTH && solid.y === 17 * GRID_HEIGHT);
+    const hasSolidAt11x25 = result.some((solid) => solid.x === 11 * GRID_WIDTH && solid.y === 25 * GRID_HEIGHT);
+
+    expect(hasSolidAt4x15).toBe(true);
+    expect(hasSolidAt3x18).toBe(true);
+    expect(hasSolidAt7x17).toBe(true);
+    expect(hasSolidAt11x25).toBe(false);
   });
 });
