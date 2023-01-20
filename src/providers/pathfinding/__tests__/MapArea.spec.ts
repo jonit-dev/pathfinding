@@ -1,5 +1,5 @@
-import { GRID_HEIGHT, GRID_WIDTH } from "@constants/gridConstants";
 import { container } from "@providers/inversify/container";
+import { FromGridX, FromGridY } from "@rpg-engine/shared";
 import { MapArea } from "../MapArea";
 
 describe("MapArea", () => {
@@ -13,10 +13,10 @@ describe("MapArea", () => {
     const result = mapArea.getAreaAroundCharacter(-8, 17, 7, 7);
 
     expect(result).toStrictEqual({
-      x: -11 * GRID_WIDTH,
-      y: 14 * GRID_HEIGHT,
-      width: 7 * GRID_WIDTH,
-      height: 7 * GRID_HEIGHT,
+      x: FromGridX(-11),
+      y: FromGridY(14),
+      width: FromGridX(7),
+      height: FromGridY(7),
       qtIndex: expect.any(Function),
     });
   });
@@ -25,10 +25,10 @@ describe("MapArea", () => {
     const result = mapArea.getAreaAroundCharacter(12, 27, 5, 5);
 
     expect(result).toStrictEqual({
-      x: 10 * GRID_WIDTH,
-      y: 25 * GRID_HEIGHT,
-      width: 5 * GRID_WIDTH,
-      height: 5 * GRID_HEIGHT,
+      x: FromGridX(10),
+      y: FromGridY(25),
+      width: FromGridX(5),
+      height: FromGridY(5),
       qtIndex: expect.any(Function),
     });
   });
