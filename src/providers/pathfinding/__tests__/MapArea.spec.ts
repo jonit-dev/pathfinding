@@ -1,9 +1,16 @@
 import { GRID_HEIGHT, GRID_WIDTH } from "@constants/gridConstants";
-import { getAreaAroundCharacter } from "../getAreaAroundCharacter";
+import { container } from "@providers/inversify/container";
+import { MapArea } from "../MapArea";
 
-describe("AreaAroundCharacter", () => {
+describe("MapArea", () => {
+  let mapArea: MapArea;
+
+  beforeAll(() => {
+    mapArea = container.get(MapArea);
+  });
+
   it("calculates an area around the character  in negative coordinates", () => {
-    const result = getAreaAroundCharacter(-8, 17, 7, 7);
+    const result = mapArea.getAreaAroundCharacter(-8, 17, 7, 7);
 
     expect(result).toStrictEqual({
       x: -11 * GRID_WIDTH,
@@ -15,7 +22,7 @@ describe("AreaAroundCharacter", () => {
   });
 
   it("calculates an area around the character WITHOUT negative coordinates", () => {
-    const result = getAreaAroundCharacter(12, 27, 5, 5);
+    const result = mapArea.getAreaAroundCharacter(12, 27, 5, 5);
 
     expect(result).toStrictEqual({
       x: 10 * GRID_WIDTH,

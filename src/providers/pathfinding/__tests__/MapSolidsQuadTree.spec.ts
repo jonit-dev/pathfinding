@@ -1,14 +1,16 @@
 import { GRID_HEIGHT, GRID_WIDTH } from "@constants/gridConstants";
 import { container } from "@providers/inversify/container";
-import { getAreaAroundCharacter } from "@providers/libs/getAreaAroundCharacter";
 import { MapSolidsQuadTree } from "@providers/pathfinding/MapSolidsQuadTree";
 import { FromGridX, FromGridY } from "@rpg-engine/shared";
+import { MapArea } from "../MapArea";
 
 describe("MapSolidsQuadTree", () => {
   let mapSolidsQuadTree: MapSolidsQuadTree;
+  let mapArea: MapArea;
 
   beforeAll(() => {
     mapSolidsQuadTree = container.get(MapSolidsQuadTree);
+    mapArea = container.get(MapArea);
   });
 
   afterEach(() => {
@@ -38,7 +40,7 @@ describe("MapSolidsQuadTree", () => {
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 7, 17);
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 11, 25);
 
-    const area = getAreaAroundCharacter(5, 17, 7, 7);
+    const area = mapArea.getAreaAroundCharacter(5, 17, 7, 7);
 
     const result = mapSolidsQuadTree.getSolidsInArea("unit-test-map-negative-coordinate", area);
 
@@ -81,7 +83,7 @@ describe("MapSolidsQuadTree", () => {
       mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", -5, 10);
       mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", -10, 15);
 
-      const area = getAreaAroundCharacter(-10, 11, 5, 5);
+      const area = mapArea.getAreaAroundCharacter(-10, 11, 5, 5);
 
       const result = mapSolidsQuadTree.getSolidsInArea("unit-test-map-negative-coordinate", area);
 
@@ -103,7 +105,7 @@ describe("MapSolidsQuadTree", () => {
       mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", -10, 15);
       mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", -7, 16);
 
-      const area = getAreaAroundCharacter(-4, 19, 7, 7);
+      const area = mapArea.getAreaAroundCharacter(-4, 19, 7, 7);
 
       const result = mapSolidsQuadTree.getSolidsInArea("unit-test-map-negative-coordinate", area);
 
