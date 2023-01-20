@@ -15,6 +15,21 @@ describe("MapSolidsQuadTree", () => {
     mapSolidsQuadTree.clear();
   });
 
+  it("gets one solid", () => {
+    mapSolidsQuadTree.init("unit-test-map-negative-coordinate", 0, 0, 32, 32);
+
+    mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 4, 15);
+    mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 3, 18);
+    mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 7, 17);
+
+    const result = mapSolidsQuadTree.getOneSolid("unit-test-map-negative-coordinate", 4, 15);
+
+    expect(result.x).toBe(4 * GRID_WIDTH);
+    expect(result.y).toBe(15 * GRID_HEIGHT);
+    expect(result.width).toBe(GRID_WIDTH);
+    expect(result.height).toBe(GRID_HEIGHT);
+  });
+
   it("properly finds the solid nodes in a specific area, WITHOUT NEGATIVE COORDINATES", () => {
     mapSolidsQuadTree.init("unit-test-map-negative-coordinate", 0, 0, 32, 32);
 
