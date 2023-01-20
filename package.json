@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.18.6",
+    "@rpg-engine/shared": "^0.6.49",
     "@timohausmann/quadtree-ts": "^2.0.0-beta.1",
     "@types/express": "^4.17.13",
     "@types/jest": "^28.1.6",
