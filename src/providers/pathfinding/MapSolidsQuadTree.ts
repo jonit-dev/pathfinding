@@ -14,7 +14,7 @@ export class MapSolidsQuadTree {
         y: startGridY * GRID_HEIGHT,
         width: gridWidth * GRID_WIDTH,
         height: gridHeight * GRID_HEIGHT,
-        maxObjects: 1,
+        maxObjects: 0,
       })
     );
   }
@@ -46,7 +46,23 @@ export class MapSolidsQuadTree {
     return tree.retrieve(area);
   }
 
+  public getQuadTree(map: string): Quadtree<Rectangle> {
+    const tree = this.grid.get(map);
+
+    if (!tree) {
+      throw new Error("Failed to get quadtree. Grid not initialized.");
+    }
+
+    return tree;
+  }
+
   public clear(): void {
+    const gridEntries = this.grid.entries();
+
+    for (const [, tree] of gridEntries) {
+      tree.clear();
+    }
+
     this.grid.clear();
   }
 }

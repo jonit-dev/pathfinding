@@ -1,4 +1,5 @@
 import { GRID_HEIGHT, GRID_WIDTH } from "@constants/gridConstants";
+import { FromGridX, FromGridY } from "@rpg-engine/shared";
 import { Rectangle } from "@timohausmann/quadtree-ts";
 
 export interface ISocketTransmissionZone {
@@ -24,10 +25,10 @@ export const getAreaAroundCharacter = (
   const zoneY = charGridY - zoneHeightHalf;
 
   return {
-    x: zoneX * GRID_WIDTH,
-    y: zoneY * GRID_HEIGHT,
-    width: zoneGridWidth * GRID_WIDTH,
-    height: zoneGridHeight * GRID_HEIGHT,
+    x: FromGridX(zoneX),
+    y: FromGridY(zoneY),
+    width: FromGridX(zoneGridWidth),
+    height: FromGridY(zoneGridHeight),
     qtIndex: Rectangle.prototype.qtIndex,
   };
 };
