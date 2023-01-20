@@ -1,5 +1,10 @@
+import { GRID_HEIGHT, GRID_WIDTH } from "@constants/gridConstants";
+import { provideSingleton } from "@providers/libs/provideSingleton";
 import { Quadtree, Rectangle } from "@timohausmann/quadtree-ts";
-import { provideSingleton } from "libs/provideSingleton";
+
+interface IGridNodeProps {
+  walkable: boolean;
+}
 
 @provideSingleton(GridQuadTreePathfinding)
 export class GridQuadTreePathfinding {
@@ -15,21 +20,22 @@ export class GridQuadTreePathfinding {
     );
   }
 
-  public addNode(map: string, x: number, y: number, width: number, height: number): void {
+  public addSolid(map: string, x: number, y: number, props?: IGridNodeProps): void {
     const tree = this.grid.get(map);
     if (tree) {
       tree.insert(
         new Rectangle({
           x,
           y,
-          width,
-          height,
+          width: GRID_WIDTH,
+          height: GRID_HEIGHT,
+          data: props as unknown as void,
         })
       );
     }
   }
 
-  public getNodesInArea(map: string, area: Rectangle): Rectangle[] {
+  public getSolidsInArea(map: string, area: Rectangle): Rectangle[] {
     const tree = this.grid.get(map);
     if (tree) {
       return tree.retrieve(area);

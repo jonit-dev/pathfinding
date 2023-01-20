@@ -10,7 +10,8 @@
     "start": "yarn build && yarn install && ts-node-dev --ignore-watch ./node_modules --transpile-only --respawn -r dotenv/config ./src/server.ts",
     "lint": "eslint --fix ./src/**/*.ts",
     "format": "prettier --write . --loglevel silent",
-    "test": "jest"
+    "test": "jest",
+    "simulate:pathfinding": "ts-node-dev --ignore-watch ./node_modules --transpile-only --respawn -r tsconfig-paths/register ./src/pathfinding-simulation.ts"
   },
   "husky": {
     "hooks": {
