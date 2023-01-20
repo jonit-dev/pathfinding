@@ -1,4 +1,4 @@
-import { GridQuadTreePathfinding } from "@providers/pathfinding/GridQuadtree";
+import { MapSolidsQuadTree } from "@providers/pathfinding/MapSolidsQuadTree";
 import { Container } from "inversify";
 import { buildProviderModule } from "inversify-binding-decorators";
 import { ServerHelper } from "../server/ServerHelper";
@@ -10,6 +10,6 @@ container.load(controllersContainer, buildProviderModule());
 
 export const serverHelper = container.get<ServerHelper>(ServerHelper);
 
-export const gridQuadTreePathfinding = container.get(GridQuadTreePathfinding);
+export const mapSolidsQuadTree = container.get(MapSolidsQuadTree);
 
 export { container };
