@@ -4,35 +4,39 @@ import { provide } from "inversify-binding-decorators";
 import PF from "pathfinding";
 import { MapSolidsQuadTree } from "./MapSolidsQuadTree";
 
-interface IConvertedCoordinates {
-  startGridX: number;
-  startGridY: number;
-  endGridX: number;
-  endGridY: number;
+interface IGridCourse {
+  start: {
+    x: number;
+    y: number;
+  };
+  end: {
+    x: number;
+    y: number;
+  };
+  offset: {
+    x: number;
+    y: number;
+  };
 }
 
 @provide(PathfindingQuadTree)
 export class PathfindingQuadTree {
   constructor(private mapSolidsQuadTree: MapSolidsQuadTree) {}
 
-  public generateGridBetweenPoints(
-    map: string,
-    startGridX: number,
-    startGridY: number,
-    endGridX: number,
-    endGridY: number
-  ): PF.Grid {
+  public generateGridBetweenPoints(map: string, gridCourse: IGridCourse): PF.Grid {
+    const { start, end } = gridCourse;
+
     const solids = this.mapSolidsQuadTree.getSolidsInArea(
       map,
       new Rectangle({
-        x: FromGridX(startGridX),
-        y: FromGridY(startGridY),
-        width: FromGridX(endGridX - startGridX),
-        height: FromGridY(endGridY - startGridY),
+        x: FromGridX(start.x),
+        y: FromGridY(start.y),
+        width: FromGridX(end.x - start.x),
+        height: FromGridY(end.y - start.y),
       })
     );
 
-    const matrix = this.generateMatrixBetweenPoints(startGridX, startGridY, endGridX, endGridY, (gridX, gridY) =>
+    const matrix = this.generateMatrixBetweenPoints(gridCourse, (gridX, gridY) =>
       solids.some((solid) => {
         return ToGridX(solid.x) === gridX && ToGridY(solid.y) === gridY;
       })
@@ -47,42 +51,38 @@ export class PathfindingQuadTree {
     return grid.nodes[gridY][gridX];
   }
 
-  public;
-  findShortestPathBetweenPoints(
-    map: string,
-    startGridX: number,
-    startGridY: number,
-    endGridX: number,
-    endGridY: number,
-    gridOffsetX: number,
-    gridOffsetY: number
-  ): PF.Node[] {
-    const grid = this.generateGridBetweenPoints(map, startGridX, startGridY, endGridX, endGridY);
+  public findShortestPathBetweenPoints(map: string, gridCourse: IGridCourse): PF.Node[] {
+    // const { start, end, offset } = gridCourse;
 
-    const finder = new PF.AStarFinder();
+    // const grid = this.generateGridBetweenPoints(map, gridCourse);
 
-    const path = finder.findPath(0, 0, grid.width - 1, grid.height - 1, grid);
+    // // const finder = new PF.AStarFinder();
 
-    return path;
+    // // const path = finder.findPath(startNode.x, startNode.y, endNode.x, endNode.y, grid);
+
+    // // const pathWithoutOffset = path.map(([x, y]) => [x + start.x, y + start.y]);
+
+    // return pathWithoutOffset;
+
+    return [];
   }
 
   private generateMatrixBetweenPoints(
-    startGridX: number,
-    startGridY: number,
-    endGridX: number,
-    endGridY: number,
+    gridCourse: IGridCourse,
     isSolidFn: (gridX: number, gridY: number) => boolean
   ): number[][] {
+    const { start, end } = gridCourse;
+
     const matrix: number[][] = [];
 
-    // generate width and height considering offset
-    const [width, height] = this.getWidthHeightBetweenPoints(startGridX, startGridY, endGridX, endGridY);
+    const [width, height] = this.getWidthHeightBetweenPoints(start.x, start.y, end.x, end.y);
 
-    for (let gridY = startGridY; gridY < startGridY + height; gridY++) {
-      matrix[gridY - startGridY] = [];
-      for (let gridX = startGridX; gridX < startGridX + width; gridX++) {
-        const isWalkable = !isSolidFn(gridX, gridY);
-        matrix[gridY - startGridY][gridX - startGridX] = isWalkable ? 0 : 1;
+    for (let gridY = 0; gridY < height; gridY++) {
+      for (let gridX = 0; gridX < width; gridX++) {
+        matrix[gridY] = matrix[gridY] || [];
+
+        const isWalkable = !isSolidFn(gridX + start.x, gridY + start.y);
+        matrix[gridY][gridX] = isWalkable ? 0 : 1;
       }
     }
 
@@ -103,21 +103,5 @@ export class PathfindingQuadTree {
     const height = Math.abs(endGridY - startGridY) + 1;
 
     return [width, height];
-  }
-
-  convertCoordinates(
-    rawStartX: number,
-    rawStartY: number,
-    rawEndX: number,
-    rawEndY: number,
-    startX: number,
-    startY: number
-  ): IConvertedCoordinates {
-    return {
-      startGridX: rawStartX + startX,
-      startGridY: rawStartY + startY,
-      endGridX: rawEndX + startX,
-      endGridY: rawEndY + startY,
-    };
   }
 }
