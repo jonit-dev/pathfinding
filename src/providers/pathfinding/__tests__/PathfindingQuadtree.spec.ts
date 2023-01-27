@@ -37,17 +37,16 @@ describe("PathfindingQuadtree", () => {
         x: -3,
         y: 17,
       },
-      offset: {
-        x: 16,
-        y: 0,
-      },
     };
 
-    const grid = pathfindingQuadTree.generateGridBetweenPoints("unit-test-map-negative-coordinate", gridCourse);
+    const data = pathfindingQuadTree.generateGridBetweenPoints("unit-test-map-negative-coordinate", gridCourse);
 
-    expect(grid).toBeDefined();
-    expect(grid.width).toBe(9 + gridCourse.offset.x);
-    expect(grid.height).toBe(9 + gridCourse.offset.y);
+    expect(data.grid).toBeDefined();
+    expect(data.grid.width).toBe(9);
+    expect(data.grid.height).toBe(9);
+
+    expect(data.startX).toBe(-11);
+    expect(data.startY).toBe(9);
   });
 
   it("calculates a shortest path between points (NEGATIVE COORDINATES)", () => {
@@ -62,68 +61,92 @@ describe("PathfindingQuadtree", () => {
         x: -9,
         y: 16,
       },
-      offset: {
-        x: 16,
-        y: 0,
-      },
     });
     console.timeEnd("pathfindingQuadTree.findShortestPathBetweenPoints");
-
     expect(path).toBeDefined();
 
     expect(path[0]).toMatchObject([-11, 14]);
     expect(path[path.length - 1]).toMatchObject([-9, 16]);
   });
 
-  // it("calculates a shortest path between points (NEGATIVE COORDINATES), inversed paths", () => {
-  //   const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
-  //     start: {
-  //       x: -11,
-  //       y: 9,
-  //     },
-  //     end: {
-  //       x: -3,
-  //       y: 17,
-  //     },
-  //     offset: {
-  //       x: 16,
-  //       y: 0,
-  //     },
-  //   });
+  it("calculates a shortest path between points (NEGATIVE COORDINATES), inverse paths", () => {
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: -3,
+        y: 17,
+      },
+      end: {
+        x: -11,
+        y: 9,
+      },
+    });
 
-  //   expect(path).toBeDefined();
+    expect(path).toBeDefined();
 
-  //   expect(path[0]).toMatchObject([-3, 17]);
-  //   expect(path[path.length - 1]).toMatchObject([-11, 9]);
+    expect(path[0]).toMatchObject([-3, 17]);
+    expect(path[path.length - 1]).toMatchObject([-11, 9]);
 
-  //   expect(path).toMatchObject([]);
-  // });
-  // it("calculates a shortest path between points (POSITIVE COORDINATES)", () => {
-  //   const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
-  //     start: {
-  //       x: 6,
-  //       y: 22,
-  //     },
-  //     end: {
-  //       x: 9,
-  //       y: 25,
-  //     },
-  //     offset: {
-  //       x: 16,
-  //       y: 0,
-  //     },
-  //   });
+    expect(path).toMatchObject([
+      [-3, 17],
+      [-3, 16],
+      [-3, 15],
+      [-3, 14],
+      [-4, 14],
+      [-5, 14],
+      [-5, 13],
+      [-5, 12],
+      [-6, 12],
+      [-7, 12],
+      [-7, 11],
+      [-8, 11],
+      [-9, 11],
+      [-9, 10],
+      [-9, 9],
+      [-10, 9],
+      [-11, 9],
+    ]);
+  });
 
-  //   expect(path).toBeDefined();
+  it("calculates a shortest path between points (NEGATIVE COORDINATES), inversed paths, another test", () => {
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: -9,
+        y: 16,
+      },
+      end: {
+        x: -11,
+        y: 14,
+      },
+    });
 
-  //   expect(path).toMatchObject([
-  //     [6, 22],
-  //     [6, 23],
-  //     [6, 24],
-  //     [6, 25],
-  //     [7, 25],
-  //     [8, 25],
-  //     [9, 25],
-  //   ]);
-  // });
+    expect(path).toBeDefined();
+
+    expect(path[0]).toMatchObject([-9, 16]);
+    expect(path[path.length - 1]).toMatchObject([-11, 14]);
+  });
+
+  it("calculates a shortest path between points (POSITIVE COORDINATES)", () => {
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: 6,
+        y: 22,
+      },
+      end: {
+        x: 9,
+        y: 25,
+      },
+    });
+
+    expect(path).toBeDefined();
+
+    expect(path).toMatchObject([
+      [6, 22],
+      [6, 23],
+      [6, 24],
+      [6, 25],
+      [7, 25],
+      [8, 25],
+      [9, 25],
+    ]);
+  });
 });
