@@ -49,7 +49,7 @@ describe("PathfindingQuadtree", () => {
     expect(data.startY).toBe(9);
   });
 
-  it("calculates a shortest path between points (NEGATIVE COORDINATES)", () => {
+  it("calculates a shortest path between points (NEGATIVE COORDINATES), top left to bottom right", () => {
     console.time("pathfindingQuadTree.findShortestPathBetweenPoints");
 
     const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
@@ -69,7 +69,7 @@ describe("PathfindingQuadtree", () => {
     expect(path[path.length - 1]).toMatchObject([-9, 16]);
   });
 
-  it("calculates a shortest path between points (NEGATIVE COORDINATES), inverse paths", () => {
+  it("calculates a shortest path between points (NEGATIVE COORDINATES), bottom right to top left", () => {
     const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
       start: {
         x: -3,
@@ -107,7 +107,7 @@ describe("PathfindingQuadtree", () => {
     ]);
   });
 
-  it("calculates a shortest path between points (NEGATIVE COORDINATES), inversed paths, another test", () => {
+  it("calculates a shortest path between points (NEGATIVE COORDINATES), bottom right to top left, another test", () => {
     const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
       start: {
         x: -9,
@@ -125,7 +125,59 @@ describe("PathfindingQuadtree", () => {
     expect(path[path.length - 1]).toMatchObject([-11, 14]);
   });
 
-  it("calculates a shortest path between points (POSITIVE COORDINATES)", () => {
+  it("calculates a shortest path between points (NEGATIVE COORDINATES), top right to bottom left", () => {
+    console.time("pathfindingQuadTree.findShortestPathBetweenPoints");
+
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: -4,
+        y: 9,
+      },
+      end: {
+        x: -6,
+        y: 11,
+      },
+    });
+
+    console.timeEnd("pathfindingQuadTree.findShortestPathBetweenPoints");
+    expect(path).toBeDefined();
+
+    expect(path).toMatchObject([
+      [-4, 9],
+      [-4, 10],
+      [-4, 11],
+      [-5, 11],
+      [-6, 11],
+    ]);
+  });
+
+  it("calculates a shortest path between points (NEGATIVE COORDINATES), bottom left to top right", () => {
+    console.time("pathfindingQuadTree.findShortestPathBetweenPoints");
+
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: -6,
+        y: 11,
+      },
+      end: {
+        x: -4,
+        y: 9,
+      },
+    });
+
+    console.timeEnd("pathfindingQuadTree.findShortestPathBetweenPoints");
+    expect(path).toBeDefined();
+
+    expect(path).toMatchObject([
+      [-6, 11],
+      [-6, 10],
+      [-6, 9],
+      [-5, 9],
+      [-4, 9],
+    ]);
+  });
+
+  it("calculates a shortest path between points (POSITIVE COORDINATES), top left to bottom right", () => {
     const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
       start: {
         x: 6,
@@ -147,6 +199,181 @@ describe("PathfindingQuadtree", () => {
       [7, 25],
       [8, 25],
       [9, 25],
+    ]);
+  });
+
+  it("calculates a shortest path between points (POSITIVE COORDINATES), top right to bottom left", () => {
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: 9,
+        y: 12,
+      },
+      end: {
+        x: 6,
+        y: 15,
+      },
+    });
+
+    expect(path).toBeDefined();
+
+    expect(path).toMatchObject([
+      [9, 12],
+      [9, 13],
+      [9, 14],
+      [9, 15],
+      [8, 15],
+      [7, 15],
+      [6, 15],
+    ]);
+  });
+
+  it("calculates a shortest path between points (POSITIVE COORDINATES), bottom right to top left", () => {
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: 9,
+        y: 15,
+      },
+      end: {
+        x: 6,
+        y: 12,
+      },
+    });
+
+    expect(path).toBeDefined();
+
+    expect(path).toMatchObject([
+      [9, 15],
+      [9, 14],
+      [9, 13],
+      [9, 12],
+      [8, 12],
+      [7, 12],
+      [6, 12],
+    ]);
+  });
+
+  it("calculates a shortest path between points (POSITIVE COORDINATES), bottom left to top right", () => {
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: 6,
+        y: 15,
+      },
+      end: {
+        x: 9,
+        y: 12,
+      },
+    });
+
+    expect(path).toBeDefined();
+
+    expect(path).toMatchObject([
+      [6, 15],
+      [6, 14],
+      [6, 13],
+      [6, 12],
+      [7, 12],
+      [8, 12],
+      [9, 12],
+    ]);
+  });
+
+  it("calculates a shortest path between points (MIX COORDINATES), horizontal line, forward", () => {
+    console.time("pathfindingQuadTree.findShortestPathBetweenPoints");
+
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: -2,
+        y: 18,
+      },
+      end: {
+        x: 1,
+        y: 18,
+      },
+    });
+
+    console.timeEnd("pathfindingQuadTree.findShortestPathBetweenPoints");
+    expect(path).toBeDefined();
+
+    expect(path).toMatchObject([
+      [-2, 18],
+      [-1, 18],
+      [0, 18],
+      [1, 18],
+    ]);
+  });
+
+  it("calculates a shortest path between points (MIX COORDINATES), horizontal line, reverse", () => {
+    console.time("pathfindingQuadTree.findShortestPathBetweenPoints");
+
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: 1,
+        y: 18,
+      },
+      end: {
+        x: -2,
+        y: 18,
+      },
+    });
+
+    console.timeEnd("pathfindingQuadTree.findShortestPathBetweenPoints");
+    expect(path).toBeDefined();
+
+    expect(path).toMatchObject([
+      [1, 18],
+      [0, 18],
+      [-1, 18],
+      [-2, 18],
+    ]);
+  });
+
+  it("2calculates a shortest path between points (MIX COORDINATES), vertical line, forward", () => {
+    console.time("pathfindingQuadTree.findShortestPathBetweenPoints");
+
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: -15,
+        y: 0,
+      },
+      end: {
+        x: -15,
+        y: 3,
+      },
+    });
+
+    console.timeEnd("pathfindingQuadTree.findShortestPathBetweenPoints");
+    expect(path).toBeDefined();
+
+    expect(path).toMatchObject([
+      [-15, 0],
+      [-15, 1],
+      [-15, 2],
+      [-15, 3],
+    ]);
+  });
+
+  it("calculates a shortest path between points (MIX COORDINATES), vertical line, reverse", () => {
+    console.time("pathfindingQuadTree.findShortestPathBetweenPoints");
+
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: -15,
+        y: 3,
+      },
+      end: {
+        x: -15,
+        y: 0,
+      },
+    });
+
+    console.timeEnd("pathfindingQuadTree.findShortestPathBetweenPoints");
+    expect(path).toBeDefined();
+
+    expect(path).toMatchObject([
+      [-15, 3],
+      [-15, 2],
+      [-15, 1],
+      [-15, 0],
     ]);
   });
 });
