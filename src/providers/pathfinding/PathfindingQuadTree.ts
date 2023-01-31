@@ -57,7 +57,7 @@ export class PathfindingQuadTree {
 
   public findShortestPathBetweenPoints(map: string, gridCourse: IGridCourse, retries?: number): PF.Node[] {
     if (!retries && retries != 0) {
-      retries = 3;
+      retries = 5;
     }
 
     const data = this.generateGridBetweenPoints(map, gridCourse);
@@ -75,7 +75,7 @@ export class PathfindingQuadTree {
 
     if (pathWithoutOffset.length < 1 && retries && retries > 0) {
       const existingOffset = gridCourse.offset ?? 1;
-      gridCourse.offset = existingOffset + existingOffset * 3;
+      gridCourse.offset = existingOffset + Math.pow(10, existingOffset);
       return this.findShortestPathBetweenPoints(map, gridCourse, --retries);
     }
 
