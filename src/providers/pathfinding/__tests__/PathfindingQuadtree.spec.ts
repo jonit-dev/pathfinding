@@ -25,6 +25,9 @@ describe("PathfindingQuadtree", () => {
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 8, 24);
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 9, 24);
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 10, 24);
+    mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 14, 31);
+    mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 14, 30);
+    mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 14, 29);
   });
 
   it("generates a grid between 2 points, with proper solids and correct width and height", () => {
@@ -327,7 +330,7 @@ describe("PathfindingQuadtree", () => {
     ]);
   });
 
-  it("2calculates a shortest path between points (MIX COORDINATES), vertical line, forward", () => {
+  it("calculates a shortest path between points (MIX COORDINATES), vertical line, forward", () => {
     console.time("pathfindingQuadTree.findShortestPathBetweenPoints");
 
     const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
@@ -374,6 +377,62 @@ describe("PathfindingQuadtree", () => {
       [-15, 2],
       [-15, 1],
       [-15, 0],
+    ]);
+  });
+
+  it("calculates a shortest path between points, straight line, obstacle in path", () => {
+    console.time("pathfindingQuadTree.findShortestPathBetweenPoints");
+
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: -10,
+        y: 12,
+      },
+      end: {
+        x: -8,
+        y: 12,
+      },
+    });
+
+    console.timeEnd("pathfindingQuadTree.findShortestPathBetweenPoints");
+    expect(path).toBeDefined();
+
+    expect(path).toMatchObject([
+      [-10, 12],
+      [-10, 11],
+      [-9, 11],
+      [-8, 11],
+      [-8, 12],
+    ]);
+  });
+
+  it("calculates a shortest path between points, straight line at the bottom corner of map, larger obstacle in path", () => {
+    console.time("pathfindingQuadTree.findShortestPathBetweenPoints");
+
+    const path = pathfindingQuadTree.findShortestPathBetweenPoints("unit-test-map-negative-coordinate", {
+      start: {
+        x: 13,
+        y: 31,
+      },
+      end: {
+        x: 15,
+        y: 31,
+      },
+    });
+
+    console.timeEnd("pathfindingQuadTree.findShortestPathBetweenPoints");
+    expect(path).toBeDefined();
+
+    expect(path).toMatchObject([
+      [13, 31],
+      [13, 30],
+      [13, 29],
+      [13, 28],
+      [14, 28],
+      [15, 28],
+      [15, 29],
+      [15, 30],
+      [15, 31],
     ]);
   });
 });

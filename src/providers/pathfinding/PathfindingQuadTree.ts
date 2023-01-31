@@ -13,6 +13,14 @@ interface IGridCourse {
     x: number;
     y: number;
   };
+  offset?: number;
+}
+
+interface IGridBounds {
+  startX: number;
+  startY: number;
+  height: number;
+  width: number;
 }
 
 @provide(PathfindingQuadTree)
@@ -20,25 +28,19 @@ export class PathfindingQuadTree {
   constructor(private mapSolidsQuadTree: MapSolidsQuadTree) {}
 
   public generateGridBetweenPoints(map: string, gridCourse: IGridCourse): any {
-    const { start, end } = gridCourse;
-
-    const startX = start.x < end.x ? start.x : end.x;
-    const startY = start.y < end.y ? start.y : end.y;
-
-    const width = Math.abs(Math.abs(end.x) - Math.abs(start.x));
-    const height = Math.abs(Math.abs(end.y) - Math.abs(start.y));
+    const bounds = this.getGridBounds(map, gridCourse);
 
     const solids = this.mapSolidsQuadTree.getSolidsInArea(
       map,
       new Rectangle({
-        x: FromGridX(startX),
-        y: FromGridY(startY),
-        width: FromGridX(width),
-        height: FromGridY(height),
+        x: FromGridX(bounds.startX),
+        y: FromGridY(bounds.startY),
+        width: FromGridX(bounds.width),
+        height: FromGridY(bounds.height),
       })
     );
 
-    const matrix = this.generateMatrixBetweenPoints(gridCourse, startX, startY, (gridX, gridY) =>
+    const matrix = this.generateMatrixBetweenPoints(bounds, (gridX, gridY) =>
       solids.some((solid) => {
         return ToGridX(solid.x) === gridX && ToGridY(solid.y) === gridY;
       })
@@ -46,14 +48,18 @@ export class PathfindingQuadTree {
 
     const pf = new PF.Grid(matrix);
 
-    return { grid: pf, startX: startX, startY: startY };
+    return { grid: pf, startX: bounds.startX, startY: bounds.startY };
   }
 
   public getNodeAt(grid: PF.Grid, gridX: number, gridY: number): PF.Node {
     return grid.nodes[gridY][gridX];
   }
 
-  public findShortestPathBetweenPoints(map: string, gridCourse: IGridCourse): PF.Node[] {
+  public findShortestPathBetweenPoints(map: string, gridCourse: IGridCourse, retries?: number): PF.Node[] {
+    if (!retries && retries != 0) {
+      retries = 3;
+    }
+
     const data = this.generateGridBetweenPoints(map, gridCourse);
     const grid = data.grid;
 
@@ -67,26 +73,26 @@ export class PathfindingQuadTree {
 
     const pathWithoutOffset = path.map(([x, y]) => [x + data.startX, y + data.startY]);
 
+    if (pathWithoutOffset.length < 1 && retries && retries > 0) {
+      const existingOffset = gridCourse.offset ?? 1;
+      gridCourse.offset = existingOffset + existingOffset * 3;
+      return this.findShortestPathBetweenPoints(map, gridCourse, --retries);
+    }
+
     return pathWithoutOffset;
   }
 
   private generateMatrixBetweenPoints(
-    gridCourse: IGridCourse,
-    startX: number,
-    startY: number,
+    bounds: IGridBounds,
     isSolidFn: (gridX: number, gridY: number) => boolean
   ): number[][] {
-    const { start, end } = gridCourse;
-
     const matrix: number[][] = [];
 
-    const [width, height] = this.getWidthHeightBetweenPoints(start.x, start.y, end.x, end.y);
-
-    for (let gridY = 0; gridY < height; gridY++) {
-      for (let gridX = 0; gridX < width; gridX++) {
+    for (let gridY = 0; gridY < bounds.height; gridY++) {
+      for (let gridX = 0; gridX < bounds.width; gridX++) {
         matrix[gridY] = matrix[gridY] || [];
 
-        const isWalkable = !isSolidFn(gridX + startX, gridY + startY);
+        const isWalkable = !isSolidFn(gridX + bounds.startX, gridY + bounds.startY);
         matrix[gridY][gridX] = isWalkable ? 0 : 1;
       }
     }
@@ -98,15 +104,44 @@ export class PathfindingQuadTree {
     return matrix;
   }
 
-  private getWidthHeightBetweenPoints(
-    startGridX: number,
-    startGridY: number,
-    endGridX: number,
-    endGridY: number
-  ): [number, number] {
-    const width = Math.abs(endGridX - startGridX) + 1;
-    const height = Math.abs(endGridY - startGridY) + 1;
+  private getGridBounds(map: string, gridCourse: IGridCourse): IGridBounds {
+    const { start, end } = gridCourse;
 
-    return [width, height];
+    let startX = start.x < end.x ? start.x : end.x;
+    let startY = start.y < end.y ? start.y : end.y;
+
+    let width = Math.abs(end.x - start.x) + 1;
+    let height = Math.abs(end.y - start.y) + 1;
+
+    if (gridCourse.offset && gridCourse.offset > 0) {
+      const bounds = this.mapSolidsQuadTree.getQuadTree(map).bounds;
+
+      const minX = ToGridX(bounds.x);
+      const minY = ToGridY(bounds.y);
+      const maxWidth = ToGridX(bounds.width);
+      const maxHeight = ToGridY(bounds.height);
+
+      const newX = startX - gridCourse.offset;
+      const newY = startY - gridCourse.offset;
+
+      startX = newX < minX ? minX : newX;
+      startY = newY < minY ? minY : newY;
+
+      const availableWidth = maxWidth - (startX + Math.abs(minX));
+      const availableHeight = maxHeight - (startY + Math.abs(minY));
+
+      const newWidth = width + gridCourse.offset * 2;
+      const newHeight = height + gridCourse.offset * 2;
+
+      width = newWidth > availableWidth ? availableWidth : newWidth;
+      height = newHeight > availableHeight ? availableHeight : newHeight;
+    }
+
+    return {
+      startX,
+      startY,
+      height,
+      width,
+    };
   }
 }
