@@ -52,7 +52,8 @@
     "reflect-metadata": "^0.1.13",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.7.4",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "js-quadtree": "3.3.6"
   },
   "dependencies": {
     "apicache-plus": "^2.3.1",

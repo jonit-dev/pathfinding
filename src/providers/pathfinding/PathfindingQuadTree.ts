@@ -1,5 +1,5 @@
 import { FromGridX, FromGridY, ToGridX, ToGridY } from "@rpg-engine/shared";
-import { Rectangle } from "@timohausmann/quadtree-ts";
+import { Box } from "js-quadtree";
 import { provide } from "inversify-binding-decorators";
 import PF from "pathfinding";
 import { MapSolidsQuadTree } from "./MapSolidsQuadTree";
@@ -32,17 +32,12 @@ export class PathfindingQuadTree {
 
     const solids = this.mapSolidsQuadTree.getSolidsInArea(
       map,
-      new Rectangle({
-        x: FromGridX(bounds.startX),
-        y: FromGridY(bounds.startY),
-        width: FromGridX(bounds.width),
-        height: FromGridY(bounds.height),
-      })
+      new Box(bounds.startX, bounds.startY, bounds.width, bounds.height)
     );
 
     const matrix = this.generateMatrixBetweenPoints(bounds, (gridX, gridY) =>
       solids.some((solid) => {
-        return ToGridX(solid.x) === gridX && ToGridY(solid.y) === gridY;
+        return solid.x === gridX && solid.y === gridY;
       })
     );
 
@@ -114,12 +109,12 @@ export class PathfindingQuadTree {
     let height = Math.abs(end.y - start.y) + 1;
 
     if (gridCourse.offset && gridCourse.offset > 0) {
-      const bounds = this.mapSolidsQuadTree.getQuadTree(map).bounds;
+      const bounds = this.mapSolidsQuadTree.getGridBounds(map);
 
-      const minX = ToGridX(bounds.x);
-      const minY = ToGridY(bounds.y);
-      const maxWidth = ToGridX(bounds.width);
-      const maxHeight = ToGridY(bounds.height);
+      const minX = bounds.x;
+      const minY = bounds.y;
+      const maxWidth = bounds.width;
+      const maxHeight = bounds.height;
 
       const newX = startX - gridCourse.offset;
       const newY = startY - gridCourse.offset;

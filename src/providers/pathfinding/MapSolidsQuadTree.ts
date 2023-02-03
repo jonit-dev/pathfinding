@@ -1,23 +1,28 @@
 import { GRID_HEIGHT, GRID_WIDTH } from "@constants/gridConstants";
 import { provideSingleton } from "@providers/libs/provideSingleton";
 import { FromGridX, FromGridY } from "@rpg-engine/shared";
-import { Quadtree, Rectangle } from "@timohausmann/quadtree-ts";
+// import { Quadtree, Rectangle } from "@timohausmann/quadtree-ts";
+import { QuadTree, Box, Point } from "js-quadtree";
 
 @provideSingleton(MapSolidsQuadTree)
 export class MapSolidsQuadTree {
-  private grid: Map<string, Quadtree<Rectangle>> = new Map();
+  private grid: Map<string, QuadTree> = new Map();
+  private gridBounds: Map<string, number[]> = new Map();
 
   public init(map: string, startGridX: number, startGridY: number, gridWidth: number, gridHeight: number): void {
-    this.grid.set(
-      map,
-      new Quadtree({
-        x: startGridX * GRID_WIDTH,
-        y: startGridY * GRID_HEIGHT,
-        width: gridWidth * GRID_WIDTH,
-        height: gridHeight * GRID_HEIGHT,
-        maxObjects: 0,
-      })
-    );
+    this.grid.set(map, new QuadTree(new Box(startGridX, startGridY, gridWidth, gridHeight)));
+
+    this.gridBounds.set(map, [startGridX, startGridY, gridWidth, gridHeight]);
+  }
+
+  public getGridBounds(map: string) {
+    const values = this.gridBounds.get(map);
+    return {
+      x: values[0],
+      y: values[1],
+      width: values[2],
+      height: values[3],
+    };
   }
 
   public addSolid(map: string, gridX: number, gridY: number): void {
@@ -27,44 +32,22 @@ export class MapSolidsQuadTree {
       throw new Error("Failed to add solid to grid. Grid not initialized.");
     }
 
-    const newSolid = new Rectangle({
-      x: gridX * GRID_WIDTH,
-      y: gridY * GRID_HEIGHT,
-      width: GRID_WIDTH,
-      height: GRID_HEIGHT,
-    });
+    const newSolid = new Point(gridX, gridY);
 
     tree.insert(newSolid);
   }
 
-  public getSolidsInArea(map: string, area: Rectangle): Rectangle[] {
+  public getSolidsInArea(map: string, area: Box): Point[] {
     const tree = this.grid.get(map);
 
     if (!tree) {
       throw new Error("Failed to get solids in area. Grid not initialized.");
     }
 
-    return tree.retrieve(area);
+    return tree.query(area);
   }
 
-  public getOneSolid(map: string, gridX: number, gridY: number): Rectangle<void> {
-    const tree = this.grid.get(map);
-
-    if (!tree) {
-      throw new Error("Failed to get one solid. Grid not initialized.");
-    }
-
-    const solid = new Rectangle({
-      x: FromGridX(gridX),
-      y: FromGridY(gridY),
-      width: FromGridX(GRID_WIDTH),
-      height: FromGridY(GRID_HEIGHT),
-    });
-
-    return tree.retrieve(solid)[0];
-  }
-
-  public getQuadTree(map: string): Quadtree<Rectangle> {
+  public getQuadTree(map: string): QuadTree {
     const tree = this.grid.get(map);
 
     if (!tree) {
