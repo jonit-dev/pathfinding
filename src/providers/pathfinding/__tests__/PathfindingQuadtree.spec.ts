@@ -18,10 +18,14 @@ describe("PathfindingQuadtree", () => {
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", -9, 12);
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", -10, 15);
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", -7, 16);
+    mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 7, 13);
+    mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 7, 14);
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 7, 21);
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 7, 22);
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 7, 23);
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 7, 24);
+    mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 8, 13);
+    mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 8, 14);
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 8, 24);
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 9, 24);
     mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", 10, 24);
@@ -50,6 +54,35 @@ describe("PathfindingQuadtree", () => {
 
     expect(data.startX).toBe(-11);
     expect(data.startY).toBe(9);
+  });
+
+  it("generates a grid between 2 points, verify walkables in new grid", () => {
+    const x = -16,
+      y = 0;
+
+    const gridCourse = {
+      start: {
+        x: x,
+        y: y,
+      },
+      end: {
+        x: x + 1,
+        y: y + 1,
+      },
+    };
+
+    mapSolidsQuadTree.addSolid("unit-test-map-negative-coordinate", x, y);
+    const data = pathfindingQuadTree.generateGridBetweenPoints("unit-test-map-negative-coordinate", gridCourse);
+    const translatedX = x - data.startX,
+      translatedY = y - data.startY;
+    expect(data.grid.isWalkableAt(translatedX, translatedY)).toBeFalsy();
+
+    mapSolidsQuadTree.removeSolid("unit-test-map-negative-coordinate", x, y);
+    const data1 = pathfindingQuadTree.generateGridBetweenPoints("unit-test-map-negative-coordinate", gridCourse);
+
+    const translatedX1 = x - data1.startX,
+      translatedY1 = y - data1.startY;
+    expect(data1.grid.isWalkableAt(translatedX1, translatedY1)).toBeTruthy();
   });
 
   it("calculates a shortest path between points (NEGATIVE COORDINATES), top left to bottom right", () => {

@@ -3327,11 +3327,6 @@ js-levenshtein@^1.1.6:
   resolved "https://registry.yarnpkg.com/js-levenshtein/-/js-levenshtein-1.1.6.tgz#c6cee58eb3550372df8deb85fad5ce66ce01d59d"
   integrity sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==
 
-js-quadtree@3.3.6:
-  version "3.3.6"
-  resolved "https://registry.yarnpkg.com/js-quadtree/-/js-quadtree-3.3.6.tgz#ce7f2b09e1d5b11333dbec5f8e18583299596893"
-  integrity sha512-cQUgpcbg7m9F/QdsEd6v0p9w8+QJKBn6RXtxNGbknTyHe3LPBCerwWrzW0lWld8Sst5GpW6/3G9KSeAA48yJVg==
-
 js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -4048,6 +4043,11 @@ qs@6.11.0:
   integrity sha512-MvjoMCJwEarSbUYk5O+nmoSzSutSsTwF85zcHPQ9OrlFoZOYIjaqBAJIqIXjptyD5vThxGq52Xu/MaJzRkIk4Q==
   dependencies:
     side-channel "^1.0.4"
+
+quadtree-lib@1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/quadtree-lib/-/quadtree-lib-1.0.9.tgz#58c4df5806d55e862ea25b1581cbe1e86e4e8a1b"
+  integrity sha512-2hFsbM1+gqVkNafxAEjv/XD9VO7s4urGkV/Wdo36YoQQ7q4i6IgcAcVcmbWLOtVcIj7XYQmUl1QUOBr59FDbsA==
 
 queue-microtask@^1.2.2:
   version "1.2.3"

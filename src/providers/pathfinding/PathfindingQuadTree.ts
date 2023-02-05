@@ -1,5 +1,3 @@
-import { FromGridX, FromGridY, ToGridX, ToGridY } from "@rpg-engine/shared";
-import { Box } from "js-quadtree";
 import { provide } from "inversify-binding-decorators";
 import PF from "pathfinding";
 import { MapSolidsQuadTree } from "./MapSolidsQuadTree";
@@ -32,14 +30,13 @@ export class PathfindingQuadTree {
 
     const solids = this.mapSolidsQuadTree.getSolidsInArea(
       map,
-      new Box(bounds.startX, bounds.startY, bounds.width, bounds.height)
+      bounds.startX,
+      bounds.startY,
+      bounds.width,
+      bounds.height
     );
 
-    const matrix = this.generateMatrixBetweenPoints(bounds, (gridX, gridY) =>
-      solids.some((solid) => {
-        return solid.x === gridX && solid.y === gridY;
-      })
-    );
+    const matrix = this.generateMatrixBetweenPoints(bounds, (gridX, gridY) => solids.get(gridX + "-" + gridY));
 
     const pf = new PF.Grid(matrix);
 

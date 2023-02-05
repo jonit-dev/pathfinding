@@ -1,16 +1,13 @@
-import { GRID_HEIGHT, GRID_WIDTH } from "@constants/gridConstants";
 import { provideSingleton } from "@providers/libs/provideSingleton";
-import { FromGridX, FromGridY } from "@rpg-engine/shared";
-// import { Quadtree, Rectangle } from "@timohausmann/quadtree-ts";
-import { QuadTree, Box, Point } from "js-quadtree";
+import Quadtree, { QuadtreeItem } from "quadtree-lib";
 
 @provideSingleton(MapSolidsQuadTree)
 export class MapSolidsQuadTree {
-  private grid: Map<string, QuadTree> = new Map();
+  private grid: Map<string, Quadtree<Quadtree.QuadtreeItem>> = new Map();
   private gridBounds: Map<string, number[]> = new Map();
 
   public init(map: string, startGridX: number, startGridY: number, gridWidth: number, gridHeight: number): void {
-    this.grid.set(map, new QuadTree(new Box(startGridX, startGridY, gridWidth, gridHeight)));
+    this.grid.set(map, new Quadtree({ width: gridWidth, height: gridHeight }));
 
     this.gridBounds.set(map, [startGridX, startGridY, gridWidth, gridHeight]);
   }
@@ -32,22 +29,49 @@ export class MapSolidsQuadTree {
       throw new Error("Failed to add solid to grid. Grid not initialized.");
     }
 
-    const newSolid = new Point(gridX, gridY);
-
-    tree.insert(newSolid);
+    const newSolid = { x: gridX, y: gridY };
+    tree.push(newSolid);
   }
 
-  public getSolidsInArea(map: string, area: Box): Point[] {
+  public removeSolid(map: string, gridX: number, gridY: number): void {
+    const tree = this.grid.get(map);
+
+    if (!tree) {
+      throw new Error("Failed to add solid to grid. Grid not initialized.");
+    }
+
+    const items = tree.find((elt) => elt.x == gridX && elt.y == gridY);
+
+    if (items && items.length) {
+      for (const item of items) {
+        tree.remove(item);
+      }
+    }
+  }
+
+  public getSolidsInArea(map: string, x: number, y: number, width: number, height: number): Map<string, boolean> {
     const tree = this.grid.get(map);
 
     if (!tree) {
       throw new Error("Failed to get solids in area. Grid not initialized.");
     }
 
-    return tree.query(area);
+    const y1 = y + height,
+      x1 = x + width;
+
+    const filtered = tree.filter((element) => {
+      return element.x >= x && element.x < x1 && element.y >= y && element.y < y1;
+    });
+
+    const keyValue: Map<string, boolean> = new Map();
+    filtered &&
+      filtered.each((elt) => {
+        keyValue.set(elt.x + "-" + elt.y, true);
+      });
+    return keyValue;
   }
 
-  public getQuadTree(map: string): QuadTree {
+  public getQuadTree(map: string): Quadtree<QuadtreeItem> {
     const tree = this.grid.get(map);
 
     if (!tree) {
